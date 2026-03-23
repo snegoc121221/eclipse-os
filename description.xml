@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<HnTheme>
+    <title>Planet</title>
+    <title-cn>星球</title-cn>
+    <author>MAGIC UI</author>
+    <designer>Honor</designer>
+    <screen>FHD</screen>
+    <version>11.0.4</version>
+    <font>Default</font>
+    <font-cn>默认</font-cn>
+    <icon-show>false</icon-show>
+</HnTheme>

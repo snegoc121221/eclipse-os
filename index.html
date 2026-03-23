@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ECLIPSE OS 5.0 — Wolf Logo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0a0f;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Discord-like layout */
+        .app {
+            display: flex;
+            height: 100vh;
+            background: #1e1f22;
+        }
+
+        /* Серверная панель (слева) */
+        .servers-bar {
+            width: 72px;
+            background: #1e1f22;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 0;
+            gap: 8px;
+            overflow-y: auto;
+            border-right: 1px solid #2b2d31;
+        }
+
+        /* Логотип волка — главная иконка */
+        .wolf-logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #2b2d31, #1e1f22);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .wolf-logo:hover {
+            border-radius: 16px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .wolf-logo.active {
+            border-radius: 16px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .wolf-logo::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            width: 4px;
+            height: 0;
+            background: white;
+            border-radius: 4px;
+            transition: height 0.2s;
+        }
+
+        .wolf-logo.active::before {
+            height: 32px;
+        }
+
+        /* Обычные серверные иконки */
+        .server-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #2b2d31, #1e1f22);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #dbdee1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .server-icon:hover {
+            border-radius: 16px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            transform: scale(1.05);
+        }
+
+        .server-icon.active {
+            border-radius: 16px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .server-divider {
+            width: 32px;
+            height: 2px;
+            background: #2b2d31;
+            margin: 8px 0;
+        }
+
+        /* Канальная панель (вторая слева) */
+        .channels-bar {
+            width: 240px;
+            background: #2b2d31;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 8px;
+        }
+
+        .channel-category {
+            color: #949ba4;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 16px 8px 4px 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .channel {
+            padding: 6px 8px;
+            margin: 1px 0;
+            border-radius: 8px;
+            color: #949ba4;
+            cursor: pointer;
+            transition: all 0.1s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .channel:hover {
+            background: #3c3f45;
+            color: #dbdee1;
+        }
+
+        .channel.active {
+            background: #3c3f45;
+            color: #dbdee1;
+        }
+
+        .channel-icon {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        /* Основной чат */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #313338;
+        }
+
+        .chat-header {
+            height: 48px;
+            background: #2b2d31;
+            border-bottom: 1px solid #1e1f22;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-weight: 600;
+            color: #dbdee1;
+            box-shadow: 0 1px 0 #1e1f22;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .wolf-avatar {
+            background: linear-gradient(135deg, #2b2d31, #1e1f22);
+            font-size: 24px;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: #dbdee1;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #949ba4;
+        }
+
+        .message-text {
+            color: #dbdee1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message-text code {
+            background: #2b2d31;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #00ffff;
+        }
+
+        /* Ввод сообщения */
+        .chat-input-area {
+            padding: 0 16px 24px 16px;
+        }
+
+        .chat-input-wrapper {
+            background: #3c3f45;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #dbdee1;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input::placeholder {
+            color: #949ba4;
+        }
+
+        .input-button {
+            background: transparent;
+            border: none;
+            color: #949ba4;
+            cursor: pointer;
+            font-size: 20px;
+            transition: color 0.2s;
+        }
+
+        .input-button:hover {
+            color: #00ffff;
+        }
+
+        /* Модульная панель справа */
+        .modules-panel {
+            width: 300px;
+            background: #2b2d31;
+            border-left: 1px solid #1e1f22;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .module-card {
+            background: #1e1f22;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #3c3f45;
+        }
+
+        .module-card:hover {
+            border-color: #00ffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.1);
+        }
+
+        .module-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gladis { color: #ff8888; }
+        .yukri { color: #8888ff; }
+        .vsez { color: #88ff88; }
+        .eskris { color: #ffff88; }
+        .sleydor { color: #ff88ff; }
+
+        .module-desc {
+            font-size: 12px;
+            color: #949ba4;
+            margin-bottom: 12px;
+        }
+
+        .module-status {
+            font-size: 10px;
+            color: #23a55a;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Статусная панель внизу */
+        .status-bar {
+            height: 52px;
+            background: #2b2d31;
+            border-top: 1px solid #1e1f22;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #23a55a;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 12px;
+            color: #dbdee1;
+        }
+
+        .altitude-display {
+            font-family: monospace;
+            font-size: 12px;
+            color: #00ffff;
+            background: #1e1f22;
+            padding: 6px 12px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+        }
+
+        .nitro-badge {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1f22;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3c3f45;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4e5058;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .servers-bar { width: 60px; }
+            .channels-bar { width: 200px; }
+            .modules-panel { width: 260px; }
+            .server-icon, .wolf-logo { width: 40px; height: 40px; font-size: 20px; }
+        }
+
+        @media (max-width: 600px) {
+            .channels-bar { display: none; }
+            .modules-panel { display: none; }
+            .servers-bar { width: 56px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Левая панель с серверами — логотип волка вверху -->
+        <div class="servers-bar">
+            <!-- ЛОГОТИП ВОЛКА — ГЛАВНАЯ ИКОНКА ECLIPSE -->
+            <div class="wolf-logo active" onclick="switchToEclipse()">
+                🐺
+            </div>
+            <div class="server-icon" onclick="switchModule('gladis')">🖥️</div>
+            <div class="server-icon" onclick="switchModule('yukri')">🎮</div>
+            <div class="server-icon" onclick="switchModule('vsez')">💬</div>
+            <div class="server-icon" onclick="switchModule('eskris')">📈</div>
+            <div class="server-icon" onclick="switchModule('sleydor')">💰</div>
+            <div class="server-divider"></div>
+            <div class="server-icon" onclick="showOmega()">🛡️</div>
+            <div class="server-icon" onclick="showTihiyChas()">🤫</div>
+        </div>
+
+        <!-- Панель каналов -->
+        <div class="channels-bar">
+            <div class="channel-category">⚡ ТЕКСТОВЫЕ КАНАЛЫ</div>
+            <div class="channel active" id="channel-general" onclick="selectChannel('general')">
+                <span class="channel-icon">#</span>
+                <span>общий</span>
+            </div>
+            <div class="channel" id="channel-system" onclick="selectChannel('system')">
+                <span class="channel-icon">🔧</span>
+                <span>системный</span>
+            </div>
+            <div class="channel" id="channel-omega" onclick="selectChannel('omega')">
+                <span class="channel-icon">🛡️</span>
+                <span>omega-защита</span>
+            </div>
+            <div class="channel-category">🎮 ГОЛОСОВЫЕ</div>
+            <div class="channel" onclick="addSystemMessage('🔊 Голосовой канал: ожидание подключения...')">
+                <span class="channel-icon">🔊</span>
+                <span>Общий голосовой</span>
+            </div>
+        </div>
+
+        <!-- Основная область чата -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <span># общий</span>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message">
+                    <div class="message-avatar wolf-avatar">🐺</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">ECLIPSE OS</span>
+                            <span class="message-time">только что</span>
+                        </div>
+                        <div class="message-text">
+                            <code>ECLIPSE OS 5.0</code> с логотипом волка загружена. 🐺🌑
+                        </div>
+                    </div>
+                </div>
+                <div class="message">
+                    <div class="message-avatar" style="background: #ff8888;">🖥️</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">GLADIS</span>
+                            <span class="message-time">только что</span>
+                        </div>
+                        <div class="message-text">
+                            Система загружена. OMEGA 2.0 активен. Волк на страже.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <div class="chat-input-wrapper">
+                    <button class="input-button" onclick="sendMessage()">➕</button>
+                    <input type="text" class="chat-input" id="message-input" placeholder="Введите сообщение..." onkeypress="handleKeyPress(event)">
+                    <button class="input-button" onclick="sendMessage()">➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая панель с модулями -->
+        <div class="modules-panel" id="modules-panel">
+            <div class="module-card" onclick="activateModule('gladis')">
+                <div class="module-title"><span class="gladis">🖥️ GLADIS</span></div>
+                <div class="module-desc">Системный анализ и мониторинг</div>
+                <div class="module-status">🟢 ONLINE</div>
+            </div>
+            <div class="module-card" onclick="activateModule('yukri')">
+                <div class="module-title"><span class="yukri">🎮 YUKRIVISE</span></div>
+                <div class="module-desc">Игровой аналитик, 40+ игр</div>
+                <div class="module-status">🟢 ONLINE</div>
+            </div>
+            <div class="module-card" onclick="activateModule('vsez')">
+                <div class="module-title"><span class="vsez">💬 VSEZNAYKA</span></div>
+                <div class="module-desc">Общение / AI помощник</div>
+                <div class="module-status">🟢 ONLINE</div>
+            </div>
+            <div class="module-card" onclick="activateModule('eskris')">
+                <div class="module-title"><span class="eskris">📈 ESKRIS</span></div>
+                <div class="module-desc">Крипто аналитик</div>
+                <div class="module-status">🟢 ONLINE</div>
+            </div>
+            <div class="module-card" onclick="activateModule('sleydor')">
+                <div class="module-title"><span class="sleydor">💰 SLEYDOR</span></div>
+                <div class="module-desc">Финансовый помощник</div>
+                <div class="module-status">🟢 ONLINE</div>
+            </div>
+            <div class="module-card" onclick="showOmegaInfo()">
+                <div class="module-title"><span style="color:#ff6666">🛡️ OMEGA 2.0</span></div>
+                <div class="module-desc">10 уровней защиты | Тихий час</div>
+                <div class="module-status" style="color:#ff6666;">🟡 АКТИВЕН</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижняя статусная панель -->
+    <div class="status-bar">
+        <div class="status-info">
+            <div class="status-dot"></div>
+            <div class="status-text">ECLIPSE OS 5.0 — WOLF EDITION</div>
+            <div class="nitro-badge">🐺 NITRO</div>
+        </div>
+        <div class="altitude-display" id="altitude">ALTITUDE 0.609 | 00:00:00 | 2300%</div>
+    </div>
+
+    <script>
+        // Обновление времени в ALTITUDE
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('altitude').innerHTML = `ALTITUDE 0.609 | ${hours}:${minutes}:${seconds} | 2300%`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Функция для логотипа волка
+        function switchToEclipse() {
+            // Убираем активный класс со всех серверных иконок
+            document.querySelectorAll('.server-icon, .wolf-logo').forEach(icon => {
+                icon.classList.remove('active');
+            });
+            // Добавляем активный класс на логотип волка
+            document.querySelector('.wolf-logo').classList.add('active');
+            addSystemMessage('🐺🌑 ECLIPSE OS — главный экран. Волк на страже.');
+        }
+
+        // Отправка сообщения
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `
+                <div class="message-avatar" style="background: linear-gradient(135deg, #00ffff, #ff00ff);">🐺</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-author">snegoc</span>
+                        <span class="message-time">только что</span>
+                    </div>
+                    <div class="message-text">${escapeHtml(text)}</div>
+                </div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            input.value = '';
+
+            // Автоответ от системы
+            setTimeout(() => {
+                const lowerText = text.toLowerCase();
+                if (lowerText.includes('тихий час') || lowerText.includes('kill')) {
+                    addSystemMessage('🤫 Тихий час готов к активации. Жду команды, создатель.');
+                } else if (lowerText.includes('омега')) {
+                    addSystemMessage('🛡️ OMEGA 2.0 активен. 10 уровней защиты работают.');
+                } else if (lowerText.includes('волк') || lowerText.includes('wolf')) {
+                    addSystemMessage('🐺 Волк всегда на страже ECLIPSE OS.');
+                } else if (lowerText.includes('gladis')) {
+                    addSystemMessage('🖥️ GLADIS: Система стабильна. Нагрузка: 15%.');
+                } else if (lowerText.includes('yukri')) {
+                    addSystemMessage('🎮 YUKRIVISE: 40+ игр в базе. Готов к анализу.');
+                } else if (lowerText.includes('vsez')) {
+                    addSystemMessage('💬 VSEZNAYKA: AI помощник активен. Задавайте вопросы.');
+                }
+            }, 500);
+        }
+
+        function addSystemMessage(text) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `
+                <div class="message-avatar wolf-avatar">🐺</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-author">ECLIPSE OS</span>
+                        <span class="message-time">только что</span>
+                    </div>
+                    <div class="message-text">${escapeHtml(text)}</div>
+                </div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Переключение модулей
+        function switchModule(module) {
+            document.querySelectorAll('.server-icon, .wolf-logo').forEach(icon => {
+                icon.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            const moduleNames = {
+                gladis: 'GLADIS — Системный анализ',
+                yukri: 'YUKRIVISE — Игровой модуль',
+                vsez: 'VSEZNAYKA — AI помощник',
+                eskris: 'ESKRIS — Крипто аналитик',
+                sleydor: 'SLEYDOR — Финансы'
+            };
+            
+            const name = moduleNames[module] || module;
+            addSystemMessage(`⚡ Переключено на модуль: ${name}`);
+        }
+
+        function activateModule(module) {
+            const moduleNames = {
+                gladis: 'GLADIS — запущен анализ системы',
+                yukri: 'YUKRIVISE — загружено 40+ игр',
+                vsez: 'VSEZNAYKA — AI помощник активен',
+                eskris: 'ESKRIS — анализируем криптовалюты',
+                sleydor: 'SLEYDOR — финансовый анализ'
+            };
+            addSystemMessage(`✅ ${moduleNames[module] || module}`);
+        }
+
+        function showOmega() {
+            document.querySelectorAll('.server-icon, .wolf-logo').forEach(icon => {
+                icon.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            addSystemMessage('🛡️ OMEGA 2.0: 10 уровней бэкапов | Самовосстановление | Тихий час активен');
+        }
+
+        function showOmegaInfo() {
+            addSystemMessage('🛡️ OMEGA 2.0: Защита активирована. 10 уровней. Kill Switch готов.');
+        }
+
+        function showTihiyChas() {
+            document.querySelectorAll('.server-icon, .wolf-logo').forEach(icon => {
+                icon.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            addSystemMessage('🤫 ТИХИЙ ЧАС: Жду команды активации. Готов положить сервера по команде.');
+        }
+
+        function selectChannel(channel) {
+            const channels = document.querySelectorAll('.channel');
+            channels.forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const channelNames = {
+                general: 'общий',
+                system: 'системный',
+                omega: 'omega-защита'
+            };
+            
+            const header = document.querySelector('.chat-header span');
+            if (header) header.innerHTML = `# ${channelNames[channel] || channel}`;
+            
+            addSystemMessage(`📡 Переключен на канал #${channelNames[channel] || channel}`);
+        }
+
+        // Инициализация
+        console.log('🐺 ECLIPSE OS 5.0 — Wolf Edition загружена');
+        console.log('👤 Разработчик: snegoc');
+        console.log('🛡️ OMEGA 2.0 активен');
+        console.log('🤫 Тихий час готов');
+        console.log('🐺 Волк на страже');
+    </script>
+</body>
+</html>
